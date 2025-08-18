@@ -6,7 +6,7 @@ import { loginUser } from '../api';
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const data = await loginUser(formData.username, formData.password);
+      const data = await loginUser(formData.email, formData.password);
 
       localStorage.setItem("token", data.token);
 
@@ -42,10 +42,10 @@ export default function Login() {
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <Input
-          label="Username"
-          type="text"
-          name="username"
-          value={formData.username}
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
           onChange={handleChange}
         />
         <Input

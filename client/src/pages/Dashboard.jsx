@@ -2,19 +2,22 @@ import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import { getClients, searchClients, addClient, logoutUser } from "../api";
+import { getClients, addClient, logoutUser } from "../api";
 
 export default function ClientsPage() {
   const [clientData, setClientData] = useState({
     fullName: "",
     email: "",
     phone: "",
+    packageName:"",
+    sector:"",
     address: "",
   });
 
+  const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  //const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchClients();
@@ -32,21 +35,21 @@ export default function ClientsPage() {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      fetchClients();
-      return;
-    }
-    setLoading(true);
-    try {
-      const data = await searchClients(searchQuery);
-      setClients(data);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleSearch = async () => {
+  //   if (!searchQuery.trim()) {
+  //     fetchClients();
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     const data = await searchClients(searchQuery);
+  //     setClients(data);
+  //   } catch (err) {
+  //     alert(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,12 +79,14 @@ export default function ClientsPage() {
     try {
       const response = await addClient(clientData);
       alert(
-        `New customer ${response.first_name} ${response.last_name} has been added successfully!`
+        `New customer ${clientData.fullName} has been added successfully!`
       );
       setClientData({
         fullName: "",
         email: "",
         phone: "",
+        packageName:"",
+        sector:"",
         address: "",
       });
     } catch (err) {
@@ -93,7 +98,7 @@ export default function ClientsPage() {
 
   const handleLogout = () => {
     logoutUser();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -131,6 +136,20 @@ export default function ClientsPage() {
             className="form-input"
           />
           <Input
+          label="Package Name"
+          name="packageName"
+          type="text"
+          value={clientData.packageName}
+          onChange={handleChange}
+          />
+          <Input
+          label="Sector"
+          name="sector"
+          type="text"
+          value={clientData.sector}
+          onChange={handleChange}
+          />
+          <Input
             label="Address"
             name="address"
             type="text"
@@ -152,7 +171,7 @@ export default function ClientsPage() {
       <section className="clients-list-section">
         <h2>Client List</h2>
 
-        <div className="search-bar">
+        {/* <div className="search-bar">
           <input
             type="text"
             placeholder="Search clients"
@@ -160,7 +179,7 @@ export default function ClientsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Button text="Search" onClick={handleSearch} />
-        </div>
+        </div> */}
 
         {loading && clients.length === 0 ? (
           <p>Loading clients...</p>

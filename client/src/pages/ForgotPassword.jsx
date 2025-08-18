@@ -26,6 +26,7 @@ export default function ForgotPassword() {
       alert(
         "If an account with that email exists, a reset token has been sent to your email address."
       );
+      setFormData((prev) => ({ ...prev, email: '' })); 
       setStep(2);
     } catch (err) {
       alert(err.message);
@@ -92,7 +93,7 @@ export default function ForgotPassword() {
         <form onSubmit={handleResetPassword}>
           <Input
             label="Reset Token"
-            type="text"
+            type="password"
             name="token"
             value={formData.token}
             onChange={handleChange}

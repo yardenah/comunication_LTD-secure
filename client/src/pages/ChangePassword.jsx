@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function ChangePassword() {
   const [formData, setFormData] = useState({
+    email:'',
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -31,10 +32,11 @@ export default function ChangePassword() {
     }
 
     try {
-      await changePassword(formData.oldPassword, formData.newPassword);
+      await changePassword(formData.email,formData.oldPassword, formData.newPassword);
 
       alert('Password changed successfully');
       setFormData({
+        email:'',
         oldPassword: '',
         newPassword: '',
         confirmPassword: '',
@@ -52,6 +54,14 @@ export default function ChangePassword() {
     <div className="container">
       <h1>Change Password</h1>
       <form onSubmit={handleSubmit}>
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
         <Input
           label="Old Password"
           type="password"
