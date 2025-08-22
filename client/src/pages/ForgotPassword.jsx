@@ -6,7 +6,7 @@ import Button from '../components/Button';
 export default function ForgotPassword() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     token: '',
     newPassword: '',
     confirmPassword: '',
@@ -22,11 +22,11 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await requestPasswordReset(formData.email);
+      await requestPasswordReset(formData.username);
       alert(
-        "If an account with that email exists, a reset token has been sent to your email address."
+        "If an account with that username exists, a reset token has been sent to your email address."
       );
-      setFormData((prev) => ({ ...prev, email: '' })); 
+      setFormData((prev) => ({ ...prev, username: '' })); 
       setStep(2);
     } catch (err) {
       alert(err.message);
@@ -47,13 +47,13 @@ export default function ForgotPassword() {
 
     try {
       await resetPassword({
-        email: formData.email,
+        username: formData.username,
         token: formData.token,
         newPassword: formData.newPassword,
       });
       alert('Password reset successful! You can now login with your new password.');
       setFormData({
-        email: '',
+        username: '',
         token: '',
         newPassword: '',
         confirmPassword: '',
@@ -73,10 +73,10 @@ export default function ForgotPassword() {
       {step === 1 ? (
         <form onSubmit={handleRequestReset}>
           <Input
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
+            label="Usernamw"
+            type="text"
+            name="username"
+            value={formData.username}
             onChange={handleChange}
             required
           />

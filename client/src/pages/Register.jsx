@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../api"; // הקריאה ל-API בקובץ נפרד
+import { registerUser } from "../api"; 
 import Input from "../components/Input";
 import Button from "../components/Button";
 

@@ -6,7 +6,7 @@ import { loginUser } from '../api';
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function Login() {
     try {
       const data = await loginUser(formData.email, formData.password);
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
 
       alert("Login successful");
       navigate("/dashboard");
@@ -42,10 +42,10 @@ export default function Login() {
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <Input
-          label="Email"
-          type="email"
-          name="email"
-          value={formData.email}
+          label="Username"
+          type="text"
+          name="username"
+          value={formData.username}
           onChange={handleChange}
         />
         <Input

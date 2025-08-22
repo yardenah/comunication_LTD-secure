@@ -1,13 +1,13 @@
 export const API_URL = "http://localhost:5000/api";
 
 // Login user 
-export async function loginUser(email, password) {
+export async function loginUser(username, password) {
   const res = await fetch(`${API_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ username, password }),
   });
 
   const data = await res.json();
@@ -38,13 +38,13 @@ export async function registerUser(userData) {
 
 
 // Change password
-export async function changePassword(email,oldPassword, newPassword) {
+export async function changePassword(username,oldPassword, newPassword) {
   const res = await fetch(`${API_URL}/change-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email,oldPassword, newPassword }),
+    body: JSON.stringify({ username,oldPassword, newPassword }),
   });
 
   const data = await res.json();
@@ -56,11 +56,11 @@ export async function changePassword(email,oldPassword, newPassword) {
 }
 
 // Request reset password
-export async function requestPasswordReset(email) {
+export async function requestPasswordReset(username) {
   const res = await fetch(`${API_URL}/request-reset-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ username }),
   });
 
   const data = await res.json();
@@ -71,11 +71,11 @@ export async function requestPasswordReset(email) {
 }
 
 // Reset password
-export async function resetPassword({ email, token, newPassword }) {
+export async function resetPassword({ username, token, newPassword }) {
   const res = await fetch(`${API_URL}/reset-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, token, newPassword }),
+    body: JSON.stringify({ username, token, newPassword }),
   });
 
   const data = await res.json();
@@ -121,5 +121,5 @@ export async function addClient(clientData) {
 
 // Logout user
 export function logoutUser() {
-  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 }
