@@ -24,7 +24,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const data = await loginUser(formData.email, formData.password);
+      const data = await loginUser(formData.username, formData.password);
 
       localStorage.setItem("user", JSON.stringify(data));
 
