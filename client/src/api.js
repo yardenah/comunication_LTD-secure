@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:5000/api";
+export const API_URL = "/api";
 
 // Login user 
 export async function loginUser(username, password) {
@@ -13,7 +13,9 @@ export async function loginUser(username, password) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Login failed");
+    // Handle both string and object error responses
+    const errorMessage = typeof data === 'string' ? data : (data.message || "Login failed");
+    throw new Error(errorMessage);
   }
 
   return data; 
@@ -30,7 +32,9 @@ export async function registerUser(userData) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Something went wrong");
+    // Handle both string and object error responses
+    const errorMessage = typeof data === 'string' ? data : (data.message || "Something went wrong");
+    throw new Error(errorMessage);
   }
 
   return data;
@@ -49,7 +53,9 @@ export async function changePassword(username,oldPassword, newPassword) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.message || 'Something went wrong');
+    // Handle both string and object error responses
+    const errorMessage = typeof data === 'string' ? data : (data.message || 'Something went wrong');
+    throw new Error(errorMessage);
   }
 
   return data;
@@ -65,7 +71,9 @@ export async function requestPasswordReset(username) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.message || 'Failed to send reset token');
+    // Handle both string and object error responses
+    const errorMessage = typeof data === 'string' ? data : (data.message || 'Failed to send reset token');
+    throw new Error(errorMessage);
   }
   return data;
 }
@@ -80,9 +88,20 @@ export async function resetPassword({ username, token, newPassword }) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.message || 'Failed to reset password');
+    // Handle both string and object error responses
+    const errorMessage = typeof data === 'string' ? data : (data.message || 'Failed to reset password');
+    throw new Error(errorMessage);
   }
   return data;
+}
+
+// Get password configuration
+export async function getPasswordConfig() {
+  const res = await fetch(`${API_URL}/config`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch password configuration");
+  }
+  return await res.json();
 }
 
 // Get all clients
