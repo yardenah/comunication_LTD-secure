@@ -16,40 +16,25 @@ export default function ClientsPage() {
 
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(false);
-  //const [searchQuery, setSearchQuery] = useState("");
+  const [loadingClients, setLoadingClients] = useState(false);  
+  const [addingClient, setAddingClient] = useState(false);
+
 
   useEffect(() => {
     fetchClients();
   }, []);
 
   const fetchClients = async () => {
-    setLoading(true);
+    setLoadingClients(true);
     try {
       const data = await getClients();
       setClients(data);
     } catch (err) {
       alert(err.message);
     } finally {
-      setLoading(false);
+      setLoadingClients(false);
     }
   };
-
-  // const handleSearch = async () => {
-  //   if (!searchQuery.trim()) {
-  //     fetchClients();
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     const data = await searchClients(searchQuery);
-  //     setClients(data);
-  //   } catch (err) {
-  //     alert(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,9 +60,17 @@ export default function ClientsPage() {
       return;
     }
 
-    setLoading(true);
+    setAddingClient(true);
     try {
       const response = await addClient(clientData);
+
+      const newClient = {
+      id: response.clientId,
+      ...clientData
+      };
+
+      setClients((prev) => [...prev, newClient]);
+
       alert(
         `New customer ${clientData.fullName} has been added successfully!`
       );
@@ -92,7 +85,7 @@ export default function ClientsPage() {
     } catch (err) {
       alert(err.message);
     } finally {
-      setLoading(false);
+      setAddingClient(false);
     }
   };
 
@@ -105,6 +98,7 @@ export default function ClientsPage() {
     <div className="container">
       <div className="top-bar">
         <Button text="Logout" onClick={handleLogout} className="logout-button" />
+        <Button text="Change Password" onClick={() => navigate("/change-password")} className="change-password" />
       </div>
 
       <h1>Clients Management</h1>
@@ -158,7 +152,7 @@ export default function ClientsPage() {
             className="form-input"
           />
 
-          {loading ? (
+          {addingClient ? (
             <button className="spinner-button" disabled>
               <div className="spinner"></div>
             </button>
@@ -170,29 +164,35 @@ export default function ClientsPage() {
 
       <section className="clients-list-section">
         <h2>Client List</h2>
-
-        {/* <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search clients"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button text="Search" onClick={handleSearch} />
-        </div> */}
-
-        {loading && clients.length === 0 ? (
+        {loadingClients && clients.length === 0 ? (
           <p>Loading clients...</p>
         ) : clients.length === 0 ? (
           <p>No clients found.</p>
         ) : (
-          <ul className="client-list">
-            {clients.map((client) => (
-              <li key={client.id} className="client-item">
-                <strong>{client.full_name}</strong> - {client.email || "No Email"}
-              </li>
-            ))}
-          </ul>
+          <table className="client-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Package</th>
+                <th>Sector</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clients.map((client) => (
+                <tr key={client.id}>
+                  <td>{client.fullName}</td>
+                  <td>{client.email || "N/A"}</td>
+                  <td>{client.phone || "N/A"}</td>
+                  <td>{client.packageName || "N/A"}</td>
+                  <td>{client.sector || "N/A"}</td>
+                  <td>{client.address || "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
     </div>
