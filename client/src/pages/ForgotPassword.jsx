@@ -73,7 +73,7 @@ export default function ForgotPassword() {
       {step === 1 ? (
         <form onSubmit={handleRequestReset}>
           <Input
-            label="Usernamw"
+            label="Username"
             type="text"
             name="username"
             value={formData.username}
@@ -91,6 +91,15 @@ export default function ForgotPassword() {
         </form>
       ) : (
         <form onSubmit={handleResetPassword}>
+          <Input
+            label="Username"
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />  
+
           <Input
             label="Reset Token"
             type="password"
