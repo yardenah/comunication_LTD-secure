@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import { getClients, addClient, logoutUser } from "../api";
+import { getClients, addClient } from "../api";
 
 export default function ClientsPage() {
   const [clientData, setClientData] = useState({
@@ -90,7 +90,7 @@ export default function ClientsPage() {
   };
 
   const handleLogout = () => {
-    logoutUser();
+    localStorage.removeItem("user");
     navigate("/");
   };
 

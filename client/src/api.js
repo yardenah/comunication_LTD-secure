@@ -113,15 +113,6 @@ export async function getClients() {
   return await res.json();
 }
 
-// Search clients by query
-// export async function searchClients(query) {
-//   const res = await fetch(`${API_URL}/clients/search?query=${encodeURIComponent(query)}`);
-//   if (!res.ok) {
-//     throw new Error("Failed to search clients");
-//   }
-//   return await res.json();
-// }
-
 // Add new client
 export async function addClient(clientData) {
   const res = await fetch(`${API_URL}/clients`, {
@@ -138,7 +129,4 @@ export async function addClient(clientData) {
   return await res.json();
 }
 
-// Logout user
-export function logoutUser() {
-  localStorage.removeItem("user");
-}
+

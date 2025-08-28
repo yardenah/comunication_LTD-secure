@@ -69,9 +69,6 @@ export default function Login() {
         <Link to="/forgot-password">Forgot Password?</Link>
       </p>
       <p>
-        <Link to="/change-password">Change Password</Link>
-      </p>
-      <p>
         <Link to="/register">Create Account</Link>
       </p>
     </div>
