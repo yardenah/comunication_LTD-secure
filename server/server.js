@@ -163,6 +163,15 @@ function handleFailedAttempt(username, res) {
   return res.status(401).json('Invalid credentials');
 }
 
+// Escape function for XSS prevention
+const escapeHtml = (unsafe) => {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
 
 // Middleware
 app.use(cors({
@@ -293,6 +302,7 @@ transporter.verify(function(error, success) {
  *       500:
  *         description: Server/database error
  */
+// ✅ Secure Register (Prepared Statements)
 app.post('/api/register', async (req, res) => {
   const { username, email, password } = req.body;
   
@@ -318,6 +328,7 @@ app.post('/api/register', async (req, res) => {
     // Hash password using HMAC + Salt
     const { hash, salt } = hashPassword(password);
     
+    // User input is safely passed as parameters (?) instead of being concatenated into the SQL string.
     db.run(
       'INSERT INTO users (username, email, password, salt) VALUES (?, ?, ?, ?)',
       [username, email, hash, salt],
@@ -377,6 +388,7 @@ app.post('/api/register', async (req, res) => {
  *       500:
  *         description: Server error
  */
+// ✅ Secure Login (Prepared Statements)
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -405,6 +417,7 @@ app.post('/api/login', (req, res) => {
     }
   }
   
+  // User input is safely passed as parameters (?) instead of being concatenated into the SQL string.
   db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
     if (err) {
       return res.status(500).json('Login failed');
@@ -814,13 +827,18 @@ app.get('/api/clients', (req, res) => {
  *       400:
  *         description: Invalid data
  */
+// ✅ Secure Add Client (Prepared Statements + Escaping)
 app.post('/api/clients', (req, res) => {
-  const { fullName, email, phone, packageName, sector, address } = req.body;
+  let { fullName, email, phone, packageName, sector, address } = req.body;
   
   if (!fullName || typeof fullName !== 'string' || fullName.trim().length === 0) {
     return res.status(400).json('Full name is required and must be a non-empty string');
   }
+
+  // Escape input for XSS prevention
+  fullName = escapeHtml(fullName);
   
+   // User input is safely passed as parameters (?) instead of being concatenated into the SQL string.
   db.run('INSERT INTO clients (fullName, email, phone, packageName, sector, address) VALUES (?, ?, ?, ?, ?, ?)',
     [fullName, email, phone, packageName, sector, address], function(err) {
     if (err) {
@@ -828,7 +846,7 @@ app.post('/api/clients', (req, res) => {
       return res.status(500).json('Failed to add client');
     }
     
-    res.status(201).json({ message: 'Client added successfully', clientId: this.lastID });
+    res.status(201).json({ message: `Client added: ${fullName}`, clientId: this.lastID });
   });
 });
 

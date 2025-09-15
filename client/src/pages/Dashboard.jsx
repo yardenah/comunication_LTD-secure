@@ -71,9 +71,7 @@ export default function ClientsPage() {
 
       setClients((prev) => [...prev, newClient]);
 
-      alert(
-        `New customer ${clientData.fullName} has been added successfully!`
-      );
+      alert(response.message); 
       setClientData({
         fullName: "",
         email: "",
