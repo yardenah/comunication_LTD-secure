@@ -162,6 +162,89 @@ The application uses SQLite with the following tables:
 - CORS protection
 - Input validation
 
+# Vulnerabilities Demonstration
+
+This section demonstrates deliberate web vulnerabilities left in the project’s routes. For each example we show a simple payload, explain how it manipulates the SQL/HTML flow, and describe the real-world impact an attacker could achieve.
+
+---
+
+# 1. Add Client – SQL Injection + Stored XSS 
+
+**Vulnerable Route:** `POST /api/clients`
+
+---
+
+## (a) SQL Injection
+
+Payload (**Full Name** field):
+
+```sql
+attacker', 'attacker@example.test', '000', 'fakePkg', 'fakeSector', 'fakeAddr'); --
+```
+**What this does**
+- Inserts a fake client row with attacker-controlled fields
+- Allows an attacker to inject arbitrary values into the database
+
+**Why this matters**
+- Fake records pollute data, can be used for impersonation, spam, or to influence reports and downstream processes
+- In other contexts, a similar injection could be modified to escalate into more destructive actions (data tampering, unauthorized access)
+
+## (b) Stored XSS
+
+Payload (**Full Name** field):
+
+```bash
+ <img src=x onerror=alert("Hacked-XSS")>
+```
+
+**What this does**
+- The application stores the string in the `clients.fullName` column without escaping
+- When the clients list is later rendered into the page without HTML-encoding (e.g. using `dangerouslySetInnerHTML` or returning raw HTML), the browser executes the script
+- Visible effect: a JavaScript `alert("Hacked-XSS")` will pop up for anyone viewing the page (demonstrates stored XSS)
+
+**Why this matters**
+- An attacker could run arbitrary JS in other users’ browsers (steal cookies/tokens, deface UI, perform actions on behalf of victims)
+- Payload is stored and affects all future viewers
+
+
+# 2. Login – SQL Injection (Authentication bypass) 
+
+**Vulnerable Route:** `POST /api/login`
+
+---
+
+Payload (**username** field):
+
+```bash
+ ' OR 1=1 --
+```
+**What this does**
+- The payload closes the username string, adds an always-true condition (`1=1`) and comments out the rest, so the `WHERE` becomes true for at least one row
+- The query returns a user row even without a correct password, so the attacker is considered authenticated
+
+**Why this matters**
+- Allows an attacker to bypass authentication and access other users’ accounts or application functionality
+- Once authenticated, the attacker can view or manipulate sensitive data, escalate privileges, or pivot to other attacks
+
+
+# 3. Register – SQL Injection (Insert fake account) 
+
+**Vulnerable Route:** `POST /api/register`
+
+---
+
+Payload (**username** field):
+
+```bash
+attacker', 'fake@mail.com', '1234', 'xyz'); --
+```
+**What this does**
+- When concatenated into an `INSERT` statement, the payload closes the `fullName` value and injects attacker-controlled column values
+- The remainder of the original `VALUES(...)` is commented out, so the database inserts a row with attacker-chosen fields (e.g., a fake user with a weak password)
+
+**Why this matters**
+- A new user record appears in the database with attacker-controlled username/email/password fields
+- In production scenarios similar injections could be adapted for data tampering or privilege escalation
 
 ## License
 
