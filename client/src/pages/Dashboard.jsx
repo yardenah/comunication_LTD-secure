@@ -62,9 +62,9 @@ export default function ClientsPage() {
 
     setAddingClient(true);
     try {
-      await addClient(clientData);
+      const res = await addClient(clientData);
 
-      alert(`Client added: ${clientData.fullName}`);
+      alert(res.message);
       
       // Fetch all clients to refresh the list
       await fetchClients();
